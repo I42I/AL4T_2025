@@ -12,14 +12,22 @@ public class NameFormatter {
             this.lastName = lastName;
         }
 
-        public String getFirstName() { return firstName; }
-        public String getMiddleName() { return middleName; }
-        public String getLastName() { return lastName; }
+        public String getFirstName() {
+            return firstName;
+        }
+
+        public String getMiddleName() {
+            return middleName;
+        }
+
+        public String getLastName() {
+            return lastName;
+        }
     }
 
     public static String displayName(Person p) {
         String s = p.getFirstName().trim();
-        if (!p.getMiddleName().isEmpty()) {
+        if (p.getMiddleName() != null && !p.getMiddleName().isEmpty()) {
             s += " " + p.getMiddleName().trim();
         }
         s += " " + p.getLastName().trim();

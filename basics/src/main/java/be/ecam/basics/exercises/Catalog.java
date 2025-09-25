@@ -12,11 +12,19 @@ public class Catalog {
             this.tags = tags;
         }
 
-        public String getName() { return name; }
-        public List<String> getTags() { return tags; }
+        public String getName() {
+            return name;
+        }
+
+        public List<String> getTags() {
+            return tags;
+        }
     }
 
     public static int countTags(Product p) {
+        if (p.getTags() == null) {
+            return 0;
+        }
         return p.getTags().size();
     }
 }

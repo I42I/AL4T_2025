@@ -14,17 +14,20 @@ public class Account {
     }
 
     public double getBalance() {
-        return balance;
+        return Math.round(balance * 100.0) / 100.0;
     }
 
     public void deposit(double amount) {
-        if (amount < 0) throw new IllegalArgumentException("amount");
+        if (amount < 0)
+            throw new IllegalArgumentException("amount");
         balance += amount;
     }
 
     public void withdraw(double amount) {
-        if (amount < 0) throw new IllegalArgumentException("amount");
-        if (amount > balance) throw new IllegalStateException("insufficient");
+        if (amount < 0)
+            throw new IllegalArgumentException("amount");
+        if (amount > balance)
+            throw new IllegalStateException("insufficient");
         balance -= amount;
     }
 
