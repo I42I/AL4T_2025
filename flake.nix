@@ -22,13 +22,13 @@
     {
       devShells.${system}.default = pkgs.mkShell {
         buildInputs = [
-          pkgs.openjdk17
+          pkgs.openjdk21
           pkgs.gradle
         ];
 
         # keep gradle caches local in the repo
         shellHook = ''
-          export JAVA_HOME=${pkgs.openjdk17}
+          export JAVA_HOME=${pkgs.openjdk21}
           export GRADLE_USER_HOME="$PWD/.gradle"
           echo "Run tests: ./gradlew :basics:test or ./gradlew :mario:test"
         '';

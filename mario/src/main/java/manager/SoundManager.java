@@ -3,6 +3,7 @@ package manager;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineEvent;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 
@@ -11,6 +12,8 @@ public class SoundManager implements ISoundManager {
     private Clip background;
     private long clipTime = 0;
 
+    private volatile boolean exclusivePlaying = false;
+
     public SoundManager() {
         background = getClip(loadAudio("background"));
     }
@@ -18,6 +21,10 @@ public class SoundManager implements ISoundManager {
     private AudioInputStream loadAudio(String url) {
         try {
             InputStream audioSrc = getClass().getResourceAsStream("/media/audio/" + url + ".wav");
+            if (audioSrc == null) {
+                System.err.println("Audio resource not found: " + url);
+                return null;
+            }
             InputStream bufferedIn = new BufferedInputStream(audioSrc);
             return AudioSystem.getAudioInputStream(bufferedIn);
 
@@ -29,6 +36,8 @@ public class SoundManager implements ISoundManager {
     }
 
     private Clip getClip(AudioInputStream stream) {
+        if (stream == null)
+            return null;
         try {
             Clip clip = AudioSystem.getClip();
             clip.open(stream);
@@ -41,13 +50,17 @@ public class SoundManager implements ISoundManager {
     }
 
     @Override
-    public void resumeBackground(){
+    public void resumeBackground() {
+        if (background == null || exclusivePlaying)
+            return;
         background.setMicrosecondPosition(clipTime);
         background.start();
     }
 
     @Override
-    public void pauseBackground(){
+    public void pauseBackground() {
+        if (background == null)
+            return;
         clipTime = background.getMicrosecondPosition();
         background.stop();
     }
@@ -58,62 +71,73 @@ public class SoundManager implements ISoundManager {
         resumeBackground();
     }
 
+    private void playOnce(String name) {
+        Clip clip = getClip(loadAudio(name));
+        if (clip == null)
+            return;
+        clip.start();
+    }
+
+    private void playExclusive(String name) {
+        Clip clip = getClip(loadAudio(name));
+        if (clip == null)
+            return;
+
+        exclusivePlaying = true;
+        pauseBackground();
+
+        clip.addLineListener(event -> {
+            if (event.getType() == LineEvent.Type.STOP) {
+                try {
+                    clip.close();
+                } catch (Exception ignored) {
+                }
+                exclusivePlaying = false;
+                resumeBackground();
+            }
+        });
+
+        clip.start();
+    }
+
     @Override
     public void playJump() {
-        Clip clip = getClip(loadAudio("jump"));
-        clip.start();
-
+        playOnce("jump");
     }
 
     @Override
     public void playCoin() {
-        Clip clip = getClip(loadAudio("coin"));
-        clip.start();
-
+        playOnce("coin");
     }
 
     @Override
     public void playFireball() {
-        Clip clip = getClip(loadAudio("fireball"));
-        clip.start();
-
+        playOnce("fireball");
     }
 
     @Override
     public void playGameOver() {
-        Clip clip = getClip(loadAudio("gameOver"));
-        clip.start();
-
+        playOnce("gameOver");
     }
 
     @Override
     public void playStomp() {
-        Clip clip = getClip(loadAudio("stomp"));
-        clip.start();
-
+        playOnce("stomp");
     }
 
     @Override
     public void playOneUp() {
-        Clip clip = getClip(loadAudio("oneUp"));
-        clip.start();
-
+        playOnce("oneUp");
     }
 
     @Override
     public void playSuperMushroom() {
-
-        Clip clip = getClip(loadAudio("superMushroom"));
-        clip.start();
-
+        playExclusive("superMushroom");
     }
 
     @Override
     public void playMarioDies() {
-
-        Clip clip = getClip(loadAudio("marioDies"));
-        clip.start();
-
+        playExclusive("marioDies");
     }
 
     @Override

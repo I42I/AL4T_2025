@@ -21,7 +21,7 @@ public class FireFlower extends BoostItem {
 
         ImageLoader imageLoader = new ImageLoader();
 
-        if(!mario.getMarioForm().isFire()){
+        if (!mario.getMarioForm().isFire()) {
             BufferedImage[] leftFrames = imageLoader.getLeftFrames(MarioForm.FIRE);
             BufferedImage[] rightFrames = imageLoader.getRightFrames(MarioForm.FIRE);
 
@@ -35,6 +35,7 @@ public class FireFlower extends BoostItem {
     }
 
     @Override
-    public void updateLocation(){}
+    public void updateLocation() {
+    }
 
 }
