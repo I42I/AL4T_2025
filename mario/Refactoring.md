@@ -32,6 +32,6 @@ Big "if-else".
 
 ### Collision bugs
 
-### Concurrency issues
+### Concurrency issues (not focus)
 
-### Sounds overlap
+### Sounds overlap (death + background)
